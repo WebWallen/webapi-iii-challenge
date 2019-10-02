@@ -4,31 +4,36 @@ const Posts = require('./postDb');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', logger, (req, res) => {
     Posts.get(req.query)
     .then(posts => res.status(200).json(posts))
     .catch(err => res.status(500).json({ message: 'Failed to get posts' }))
 });
 
-router.get('/:id', validatePostId, (req, res) => {
+router.get('/:id', logger, validatePostId, (req, res) => {
     Posts.getById(req.params.id)
     .then(post => res.status(200).json(post))
     .catch(err => res.status(500).json({ message: 'Failed to get post' }))
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', logger, validatePostId, (req, res) => {
     Posts.remove(req.params.id)
     .then(post => res.status(200).json({ message: 'Bye, baby!' }))
     .catch(err => res.status(500).json({ message: 'Failed to delete' }))
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', logger, validatePostId, (req, res) => {
     Posts.update(req.params.id, req.body)
     .then(post => res.status(200).json(post))
     .catch(err => res.status(500).json({ message: 'Failed to update' }))
 });
 
 // custom middleware
+
+function logger(req, res, next) {
+    console.log(`${req.method} to ${req.path}`)
+    next();
+  };
 
 function validatePostId(req, res, next) {
     Posts.getById(req.params.id)

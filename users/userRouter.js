@@ -5,31 +5,31 @@ const Posts = require('../posts/postDb');
 
 const router = express.Router();
 
-router.post('/', validateUser, (req, res) => {
+router.post('/', logger, validateUser, (req, res) => {
     Users.insert(req.body)
         .then(user => res.status(201).json(user)) // 201 for post req
         .catch(err => res.status(500).json({ message: 'Error adding user' }))
 }); // 500 is a catch-all for failures that happen internally
 
-router.get('/', (req, res) => {
+router.get('/', logger, (req, res) => {
     Users.get(req.query)
     .then(users => res.status(200).json(users)) // 200 for get req
     .catch(err => res.status(500).json({ message: 'Failed to get users' }))
 });
 
-router.get('/:id', validateUserId, (req, res) => {
+router.get('/:id', logger, validateUserId, (req, res) => {
     Users.getById(req.params.id)
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).json({ message: 'Failed to get user' }))
 });
 
-router.get('/:id/posts', validateUserId, (req, res) => {
+router.get('/:id/posts', logger, validateUserId, (req, res) => {
     Users.getUserPosts(req.params.id)
     .then(posts => res.status(200).json(posts))
     .catch(err => res.status(500).json({ message: 'Error fetching posts' }))
 });
 
-router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
+router.post('/:id/posts', logger, validateUserId, validatePost, (req, res) => {
     const postData = { ...req.body, user_id: req.params.id };
 
     Posts.insert(postData)
@@ -37,19 +37,24 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
         .catch(err => res.status(500).json({ message: 'Failed to add post' }))
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', logger, validateUserId, (req, res) => {
     Users.remove(req.params.id)
     .then(user => res.status(200).json({ message: 'Boom, gone!' }))
     .catch(err => res.status(500).json({ message: 'Failed to delete' }))
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', logger, validateUserId, (req, res) => {
     Users.update(req.params.id, req.body) // first arg = user ID and second = update string
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).json({ message: 'Failed to update' }))
 });
 
 //custom middleware
+
+function logger(req, res, next) {
+    console.log(`${req.method} to ${req.path}`)
+    next();
+  };
 
 function validateUserId(req, res, next) {
     Users.getById(req.params.id)
