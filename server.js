@@ -6,10 +6,12 @@ const userRouter = require('./users/userRouter');
 
 const server = express();
 
+const timestamp = require('time-stamp')
+
 //custom middleware
 
 function logger(req, res, next) {
-  console.log(`${req.method} to ${req.path} at ${req.time}`)
+  console.log(`${req.method} to ${req.path}`)
   next();
 };
 
