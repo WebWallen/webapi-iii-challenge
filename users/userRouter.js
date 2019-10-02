@@ -1,4 +1,4 @@
-const express = 'express';
+const express = require('express');
 
 const router = express.Router();
 
@@ -37,10 +37,6 @@ function validateUserId(req, res, next) {
 };
 
 function validateUser(req, res, next) {
-
-};
-
-function validatePost(req, res, next) {
 
 };
 
