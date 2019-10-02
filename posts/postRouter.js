@@ -17,11 +17,15 @@ router.get('/:id', validatePostId, (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-
+    Posts.remove(req.params.id)
+    .then(post => res.status(200).json({ message: 'Bye, baby!' }))
+    .catch(err => res.status(500).json({ message: 'Failed to delete' }))
 });
 
 router.put('/:id', (req, res) => {
-
+    Posts.update(req.params.id, req.body)
+    .then(post => res.status(200).json(post))
+    .catch(err => res.status(500).json({ message: 'Failed to update' }))
 });
 
 // custom middleware
