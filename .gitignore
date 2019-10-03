@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# dot env (added so others can use a different local host)
+.env
+
 # Runtime data
 pids
 *.pid
